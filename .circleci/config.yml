@@ -1,0 +1,21 @@
+version: 2.1
+
+jobs:
+  capacity:
+    machine:
+      image: ubuntu-2404:current
+    resource_class: 2xlarge+
+    steps:
+      - run:
+          name: Measure available CPUs
+          command: |
+            echo "NPROC=$(nproc)"
+            echo "AFFINITY=$(nproc --all)"
+            grep -c '^processor' /proc/cpuinfo
+            lscpu
+            free -h
+
+workflows:
+  capacity:
+    jobs:
+      - capacity
