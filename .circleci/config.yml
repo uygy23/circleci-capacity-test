@@ -2,8 +2,8 @@ version: 2.1
 
 jobs:
   capacity:
-    machine:
-      image: ubuntu-2404:current
+    docker:
+      - image: cimg/base:current
     resource_class: 2xlarge+
     steps:
       - run:
