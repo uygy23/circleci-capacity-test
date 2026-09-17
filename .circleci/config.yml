@@ -9,6 +9,14 @@ jobs:
   capacity:
     docker:
       - image: cimg/base:current
+      - image: cimg/base:current
+        command: ["bash", "-c", "openssl speed -elapsed -seconds 45 -bytes 16384 -multi 4 sha256 >/dev/null 2>&1; sleep 120"]
+      - image: cimg/base:current
+        command: ["bash", "-c", "openssl speed -elapsed -seconds 45 -bytes 16384 -multi 4 sha256 >/dev/null 2>&1; sleep 120"]
+      - image: cimg/base:current
+        command: ["bash", "-c", "openssl speed -elapsed -seconds 45 -bytes 16384 -multi 4 sha256 >/dev/null 2>&1; sleep 120"]
+      - image: cimg/base:current
+        command: ["bash", "-c", "openssl speed -elapsed -seconds 45 -bytes 16384 -multi 4 sha256 >/dev/null 2>&1; sleep 120"]
     resource_class: << pipeline.parameters.runner_class >>
     steps:
       - run:
@@ -21,10 +29,7 @@ jobs:
             echo "CGROUP_CPUSET=$(cat /sys/fs/cgroup/cpuset.cpus.effective 2>/dev/null || true)"
             lscpu
             free -h
-            for workers in 1 2 4 8 16 32; do
-              echo "OPENSSL_WORKERS=$workers"
-              openssl speed -elapsed -seconds 2 -bytes 16384 -multi "$workers" sha256 2>&1 | tail -n 1
-            done
+            openssl speed -elapsed -seconds 45 -bytes 16384 -multi 4 sha256 2>&1 | tail -n 1
 
 workflows:
   capacity:
