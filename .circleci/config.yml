@@ -12,8 +12,14 @@ jobs:
             echo "NPROC=$(nproc)"
             echo "AFFINITY=$(nproc --all)"
             grep -c '^processor' /proc/cpuinfo
+            echo "CGROUP_CPU_MAX=$(cat /sys/fs/cgroup/cpu.max 2>/dev/null || true)"
+            echo "CGROUP_CPUSET=$(cat /sys/fs/cgroup/cpuset.cpus.effective 2>/dev/null || true)"
             lscpu
             free -h
+            for workers in 1 2 4 8 16 32; do
+              echo "OPENSSL_WORKERS=$workers"
+              openssl speed -elapsed -seconds 2 -multi "$workers" sha256 2>&1 | tail -n 1
+            done
 
 workflows:
   capacity:
