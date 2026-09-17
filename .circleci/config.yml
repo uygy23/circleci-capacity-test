@@ -1,10 +1,15 @@
 version: 2.1
 
+parameters:
+  runner_class:
+    type: string
+    default: medium
+
 jobs:
   capacity:
     docker:
       - image: cimg/base:current
-    resource_class: medium
+    resource_class: << pipeline.parameters.runner_class >>
     steps:
       - run:
           name: Measure available CPUs
@@ -18,7 +23,7 @@ jobs:
             free -h
             for workers in 1 2 4 8 16 32; do
               echo "OPENSSL_WORKERS=$workers"
-              openssl speed -elapsed -seconds 2 -multi "$workers" sha256 2>&1 | tail -n 1
+              openssl speed -elapsed -seconds 2 -bytes 16384 -multi "$workers" sha256 2>&1 | tail -n 1
             done
 
 workflows:
