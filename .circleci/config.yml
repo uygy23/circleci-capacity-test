@@ -4,7 +4,7 @@ jobs:
   capacity:
     docker:
       - image: cimg/base:current
-    resource_class: 2xlarge+
+    resource_class: medium
     steps:
       - run:
           name: Measure available CPUs
