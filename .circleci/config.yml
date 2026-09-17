@@ -4,20 +4,16 @@ parameters:
   runner_class:
     type: string
     default: medium
+  shards:
+    type: integer
+    default: 1
 
 jobs:
   capacity:
     docker:
       - image: cimg/base:current
-      - image: cimg/base:current
-        command: ["bash", "-c", "openssl speed -elapsed -seconds 45 -bytes 16384 -multi 4 sha256 >/dev/null 2>&1; sleep 120"]
-      - image: cimg/base:current
-        command: ["bash", "-c", "openssl speed -elapsed -seconds 45 -bytes 16384 -multi 4 sha256 >/dev/null 2>&1; sleep 120"]
-      - image: cimg/base:current
-        command: ["bash", "-c", "openssl speed -elapsed -seconds 45 -bytes 16384 -multi 4 sha256 >/dev/null 2>&1; sleep 120"]
-      - image: cimg/base:current
-        command: ["bash", "-c", "openssl speed -elapsed -seconds 45 -bytes 16384 -multi 4 sha256 >/dev/null 2>&1; sleep 120"]
     resource_class: << pipeline.parameters.runner_class >>
+    parallelism: << pipeline.parameters.shards >>
     steps:
       - run:
           name: Measure available CPUs
@@ -29,7 +25,8 @@ jobs:
             echo "CGROUP_CPUSET=$(cat /sys/fs/cgroup/cpuset.cpus.effective 2>/dev/null || true)"
             lscpu
             free -h
-            openssl speed -elapsed -seconds 45 -bytes 16384 -multi 4 sha256 2>&1 | tail -n 1
+            echo "SHARD=$CIRCLE_NODE_INDEX/$CIRCLE_NODE_TOTAL"
+            openssl speed -elapsed -seconds 20 -bytes 16384 -multi 4 sha256 2>&1 | tail -n 1
 
 workflows:
   capacity:
